@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Main {
 
@@ -9,31 +10,11 @@ public class Main {
     public static void main(String[] args) throws IOException
     {
         Parser metroParser = new Parser(URL);
-        metroParser.parse();
+        ArrayList<Line> lines = metroParser.parse();
+
+        for (Line line : lines)
+        {
+            System.out.println(line.getNumber() + " " + line.getName() + " " + line.getColor());
+        }
     }
 }
-
-/**============TEST CODE================*/
-
-//        Element codeForColors = doc.selectFirst("style");
-//        String color = codeForColors.toString().substring(codeForColors.toString().indexOf("line-1 a:hover"));
-//        ArrayList<String> colors = new ArrayList<>();
-//
-//        for (int i = 0; i < color.length() ; i++) {
-//            if (color.charAt(i) == '#') {
-//                colors.add(color.substring(i, i+7));
-//            }
-//        }
-
-//        Element table = doc.select("table").get(8);
-//        String num = table.select("span[class]").text();
-//       // String num1 = num.text();
-//        String name = table.select("a").text();
-//        System.out.println(name);
-//        System.out.println(num);
-//        Attributes codeForLines = doc.selectFirst("div[data-list_classes]").attributes();
-//        String [] names = codeForLines.toString().split("&quot;");
-//
-//        for (String string: names) {
-//            System.out.println(string);
-//        }

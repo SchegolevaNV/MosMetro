@@ -15,11 +15,10 @@ public class Parser
         this.url = url;
     }
 
-    public void parse() throws IOException
+    public ArrayList<Line> parse() throws IOException
     {
         Document doc = Jsoup.connect(url).maxBodySize(0).get();
-        TreeMap<String, String> lines = new TreeMap<>();
-        TreeSet<String> colors = new TreeSet<>();
+        ArrayList<Line> lines = new ArrayList<>();
 
         for (int i = 3; i <= 5; i++) {
             Elements table = doc.select("table").get(i).select("tr");
@@ -33,22 +32,26 @@ public class Parser
                     if (lineName.isEmpty()) {
                         lineName = td.select("span[title]").attr("title");
                     }
-                    lines.put(lineNumber, lineName);
-                    colors.add(color);
+                    Line line = new Line(lineNumber, lineName.replaceAll(" линия", ""), color);
+                    if (!lines.contains(line))
+                    lines.add(line);
                 }
             }
         }
-        for (Map.Entry<String, String> entry : lines.entrySet())
-        {
-            System.out.println(entry.getKey() + " : " + entry.getValue());
-        }
-
-        Iterator iterator = colors.iterator();
-        while (iterator.hasNext()){
-            System.out.println(iterator.next());
-        }
-
-
+        return lines;
     }
 }
-
+/**===ТЕСТОВЫЙ КОД =======*/
+//   TreeMap<String, String> lines = new TreeMap<>();
+//   TreeSet<String> colors = new TreeSet<>();
+//                    lines.put(lineNumber, lineName.replaceAll(" линия", ""));
+//                    colors.add(color);
+//        for (Map.Entry<String, String> entry : lines.entrySet())
+//        {
+//            System.out.println(entry.getKey() + " : " + entry.getValue());
+//        }
+//
+//        Iterator iterator = colors.iterator();
+//        while (iterator.hasNext()){
+//            System.out.println(iterator.next());
+//        }
