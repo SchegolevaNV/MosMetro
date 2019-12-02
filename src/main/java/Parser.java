@@ -1,3 +1,5 @@
+import Metro.Line;
+import Metro.Station;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -11,13 +13,14 @@ public class Parser {
     public Parser (String url) {
         this.url = url;
     }
-    Object[] objects = new Object[]{2};
+    Object[] objects = new Object[]{};
 
     public Object[] parse() throws IOException {
         Document doc = Jsoup.connect(url).maxBodySize(0).get();
         ArrayList<Line> lines = new ArrayList<>();
         ArrayList<Station> stations = new ArrayList<>();
         Line lineForStation = new Line("", "", "");
+        Line line8A = new Line("", "", "");
 
         for (int i = 3; i <= 5; i++) {
             Elements table = doc.select("table").get(i).select("tr");
@@ -41,27 +44,17 @@ public class Parser {
                     Station station = new Station(stationName, lineForStation);
                     lineForStation.addStation(station);
                     stations.add(station);
+
+                    if (lineForStation.getNumber().equals("8А")) {
+                        line8A = lineForStation;
+                    }
+                    if (lineForStation.getNumber().equals("11")) {
+                        if (!station.getName().equals("Деловой центр"))
+                        line8A.addStation(station);
+                    }
                 }
             }
         }
-
-        List<Station> stations11 = new ArrayList<>();
-        int linePosition = 0;
-
-        for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).getNumber().equals("11")) {
-                stations11 = lines.get(i).getStations();
-            }
-            if (lines.get(i).getNumber().equals("8А"))
-            {
-                linePosition = i;
-            }
-        }
-
-        for (int j = 1; j < stations11.size(); j++) {
-                lines.get(linePosition).addStation(stations11.get(j));
-        }
-
         return objects = new Object[]{lines, stations};
     }
 }

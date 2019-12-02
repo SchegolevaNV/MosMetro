@@ -1,3 +1,5 @@
+package Metro;
+
 public class Station implements Comparable<Station>
 {
     private Line line;
