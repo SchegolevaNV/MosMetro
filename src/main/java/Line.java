@@ -12,7 +12,7 @@ public class Line implements Comparable<Line>
         this.number = number;
         this.name = name;
         this.color = color;
-        stations = new ArrayList<>();
+        stations = new ArrayList();
     }
 
     public String getNumber() {

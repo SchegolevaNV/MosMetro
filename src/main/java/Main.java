@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
 
@@ -10,11 +11,14 @@ public class Main {
     public static void main(String[] args) throws IOException
     {
         Parser metroParser = new Parser(URL);
-        ArrayList<Line> lines = metroParser.parse();
+        Object[] metro = metroParser.parse();
+        ArrayList<Line> lines = (ArrayList<Line>) metro[0];
+        ArrayList<Station> stations = (ArrayList<Station>) metro[1];
 
         for (Line line : lines)
         {
             System.out.println(line.getNumber() + " " + line.getName() + " " + line.getColor());
+            System.out.println(line.getStations());
         }
     }
 }
