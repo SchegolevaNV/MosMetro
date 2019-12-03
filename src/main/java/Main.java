@@ -17,10 +17,10 @@ public class Main {
         ArrayList<Line> lines = (ArrayList<Line>) metro[0];
         ArrayList<Station> stations = (ArrayList<Station>) metro[1];
 
-        for (Line line : lines)
-        {
-            System.out.println(line.getNumber() + " " + line.getName() + " " + line.getColor() + " / " + line.getStations().size());
-            System.out.println(line.getStations());
-        }
+//        for (Line line : lines)
+//        {
+//            System.out.println(line.getNumber() + " " + line.getName() + " " + line.getColor() + " / " + line.getStations().size());
+//            System.out.println(line.getStations());
+//        }
     }
 }

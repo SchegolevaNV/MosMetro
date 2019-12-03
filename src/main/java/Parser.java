@@ -19,6 +19,7 @@ public class Parser {
         Document doc = Jsoup.connect(url).maxBodySize(0).get();
         ArrayList<Line> lines = new ArrayList<>();
         ArrayList<Station> stations = new ArrayList<>();
+        ArrayList<Station> connections = new ArrayList<>();
         Line lineForStation = new Line("", "", "");
         Line line8A = new Line("", "", "");
 
@@ -51,6 +52,19 @@ public class Parser {
                     if (lineForStation.getNumber().equals("11")) {
                         if (!station.getName().equals("Деловой центр"))
                         line8A.addStation(station);
+                    }
+
+                    String lineConnectionNumber = td.get(3).select("span.sortkey").text();
+                    if (!lineConnectionNumber.isEmpty())
+                    {
+                        Elements lineConnectionNames = td.get(3).select("span[title]");
+                        for (int k = 0; k < lineConnectionNames.size(); k++) {
+                            String lineConnectionName = lineConnectionNames.get(k).attr("title");
+                            lineConnectionName = lineConnectionName.replaceAll(".+ станцию ", "");
+                            if(lineConnectionName.contains(station.getName()))
+                                lineConnectionName = station.getName();
+                            System.out.println(lineConnectionNumber + " / " + lineConnectionName);
+                        }
                     }
                 }
             }
