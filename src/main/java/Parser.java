@@ -9,13 +9,14 @@ import java.util.*;
 public class Parser {
 
     private String url;
+    Object[] objects = new Object[]{};
 
     public Parser (String url) {
         this.url = url;
     }
-    Object[] objects = new Object[]{};
 
     public Object[] parse() throws IOException {
+
         Document doc = Jsoup.connect(url).maxBodySize(0).get();
         ArrayList<Line> lines = new ArrayList<>();
         ArrayList<Station> stations = new ArrayList<>();
@@ -53,15 +54,29 @@ public class Parser {
                         if (!station.getName().equals("Деловой центр"))
                         line8A.addStation(station);
                     }
+                }
+            }
+        }
+        return objects = new Object[]{lines, stations};
+    }
 
+    public void parseConnection () throws IOException {
+
+        Document doc = Jsoup.connect(url).maxBodySize(0).get();
+
+        for (int i = 3; i <= 5; i++) {
+            Elements table = doc.select("table").get(i).select("tr");
+
+            for (int j = 0; j < table.size(); j++) {
+                Elements td = table.get(j).select("td");
+                if (!td.isEmpty()) {
                     String lineConnectionNumber = td.get(3).select("span.sortkey").text();
-                    if (!lineConnectionNumber.isEmpty())
-                    {
+                    if (!lineConnectionNumber.isEmpty()) {
                         Elements lineConnectionNames = td.get(3).select("span[title]");
                         for (int k = 0; k < lineConnectionNames.size(); k++) {
                             String lineConnectionName = lineConnectionNames.get(k).attr("title");
                             lineConnectionName = lineConnectionName.replaceAll(".+ станцию ", "");
-                            if(lineConnectionName.contains(station.getName()))
+                            if (lineConnectionName.contains(station.getName()))
                                 lineConnectionName = station.getName();
                             System.out.println(lineConnectionNumber + " / " + lineConnectionName);
                         }
@@ -69,7 +84,6 @@ public class Parser {
                 }
             }
         }
-        return objects = new Object[]{lines, stations};
     }
 }
 /**===ТЕСТОВЫЙ КОД =======**/
