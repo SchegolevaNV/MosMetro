@@ -1,3 +1,4 @@
+import Metro.Connections;
 import Metro.Line;
 import Metro.Station;
 import org.jsoup.Jsoup;
@@ -9,6 +10,8 @@ import java.util.*;
 public class Parser {
 
     private String url;
+    ArrayList<Line> lines = new ArrayList<>();
+    ArrayList<Station> stations = new ArrayList<>();
     Object[] objects = new Object[]{};
 
     public Parser (String url) {
@@ -18,9 +21,6 @@ public class Parser {
     public Object[] parse() throws IOException {
 
         Document doc = Jsoup.connect(url).maxBodySize(0).get();
-        ArrayList<Line> lines = new ArrayList<>();
-        ArrayList<Station> stations = new ArrayList<>();
-        ArrayList<Station> connections = new ArrayList<>();
         Line lineForStation = new Line("", "", "");
         Line line8A = new Line("", "", "");
 
@@ -29,15 +29,18 @@ public class Parser {
 
             for (int j = 0; j < table.size(); j++) {
                 Elements td = table.get(j).select("td");
+
                 if (!td.isEmpty()) {
                     String lineNumber = td.get(0).selectFirst("span.sortkey").text();
                     String color = td.get(0).select("[style^=background:#]").attr("style")
                                             .replaceAll("background:", "");
                     String lineName = td.get(0).select("span[title$=линия]").attr("title");
+
                     if (lineName.isEmpty()) {
                         lineName = td.get(0).select("span[title]").attr("title");
                     }
                     Line line = new Line(lineNumber, lineName.replaceAll(" линия", ""), color);
+
                     if (!lines.contains(line)) {
                         lines.add(line);
                         lineForStation = line;
@@ -50,6 +53,7 @@ public class Parser {
                     if (lineForStation.getNumber().equals("8А")) {
                         line8A = lineForStation;
                     }
+
                     if (lineForStation.getNumber().equals("11")) {
                         if (!station.getName().equals("Деловой центр"))
                         line8A.addStation(station);
@@ -57,33 +61,54 @@ public class Parser {
                 }
             }
         }
+        parseConnection();
         return objects = new Object[]{lines, stations};
     }
 
-    public void parseConnection () throws IOException {
+    public Object[] parseConnection () throws IOException {
 
         Document doc = Jsoup.connect(url).maxBodySize(0).get();
+        Station mainStation = new Station("", null);
+        Station connectStation = new Station("", null);
 
         for (int i = 3; i <= 5; i++) {
             Elements table = doc.select("table").get(i).select("tr");
 
             for (int j = 0; j < table.size(); j++) {
                 Elements td = table.get(j).select("td");
+
                 if (!td.isEmpty()) {
+                    String stationName = td.get(1).selectFirst("a").text();
                     String lineConnectionNumber = td.get(3).select("span.sortkey").text();
+
                     if (!lineConnectionNumber.isEmpty()) {
                         Elements lineConnectionNames = td.get(3).select("span[title]");
+                        ArrayList<Station> connections = new ArrayList<>();
+
                         for (int k = 0; k < lineConnectionNames.size(); k++) {
                             String lineConnectionName = lineConnectionNames.get(k).attr("title");
                             lineConnectionName = lineConnectionName.replaceAll(".+ станцию ", "");
-                            if (lineConnectionName.contains(station.getName()))
-                                lineConnectionName = station.getName();
+
+                            for (int l = 0; l < stations.size(); l++) {
+                                if (lineConnectionName.contains(stations.get(l).getName())) {
+                                    lineConnectionName = stations.get(l).getName();
+                                    connectStation = stations.get(l);
+                                }
+
+                                if (stationName.contains(stations.get(l).getName()))
+                                    mainStation = stations.get(l);
+                            }
                             System.out.println(lineConnectionNumber + " / " + lineConnectionName);
+                            connections.add(mainStation);
+                            connections.add(connectStation);
                         }
+                        Connections connection = new Connections(connections);
+                       // System.out.println(connection.getConnections());
                     }
                 }
             }
         }
+        return null;
     }
 }
 /**===ТЕСТОВЫЙ КОД =======**/

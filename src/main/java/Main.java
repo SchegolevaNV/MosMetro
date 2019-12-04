@@ -3,6 +3,7 @@ import Metro.Station;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Main {
 
@@ -20,7 +21,6 @@ public class Main {
 //        for (Line line : lines)
 //        {
 //            System.out.println(line.getNumber() + " " + line.getName() + " " + line.getColor() + " / " + line.getStations().size());
-//            System.out.println(line.getStations());
 //        }
     }
 }
