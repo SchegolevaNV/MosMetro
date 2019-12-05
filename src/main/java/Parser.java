@@ -14,7 +14,7 @@ public class Parser {
     ArrayList<Station> stations = new ArrayList<>();
     Object[] objects = new Object[]{};
 
-    public Parser (String url) {
+    public Parser(String url) {
         this.url = url;
     }
 
@@ -33,7 +33,7 @@ public class Parser {
                 if (!td.isEmpty()) {
                     String lineNumber = td.get(0).selectFirst("span.sortkey").text();
                     String color = td.get(0).select("[style^=background:#]").attr("style")
-                                            .replaceAll("background:", "");
+                            .replaceAll("background:", "");
                     String lineName = td.get(0).select("span[title$=линия]").attr("title");
 
                     if (lineName.isEmpty()) {
@@ -56,7 +56,7 @@ public class Parser {
 
                     if (lineForStation.getNumber().equals("11")) {
                         if (!station.getName().equals("Деловой центр"))
-                        line8A.addStation(station);
+                            line8A.addStation(station);
                     }
                 }
             }
@@ -65,7 +65,7 @@ public class Parser {
         return objects = new Object[]{lines, stations};
     }
 
-    public ArrayList<Connections> parseConnection () throws IOException {
+    public ArrayList<Connections> parseConnection() throws IOException {
 
         Document doc = Jsoup.connect(url).maxBodySize(0).get();
         Station mainStation = new Station("", null);
@@ -79,36 +79,29 @@ public class Parser {
                 Elements td = table.get(j).select("td");
 
                 if (!td.isEmpty()) {
+                    String lineNumber = td.get(0).selectFirst("span.sortkey").text();
                     String stationName = td.get(1).selectFirst("a").text();
                     String lineConnectionNumber = td.get(3).select("span.sortkey").text();
 
                     if (!lineConnectionNumber.isEmpty()) {
-                        Elements lineConnectionNames = td.get(3).select("span[title]");
-                        TreeMap<String,String> connectStations = new TreeMap<>();
+                        String[] lineConnectionNumbers = lineConnectionNumber.split("\\s");
+                        Elements stationConnectionNames = td.get(3).select("span[title]");
+                        TreeMap<String, String> connectStations = new TreeMap<>();
+                        connectStations.put(lineNumber, stationName);
 
-                        for (int k = 0; k < lineConnectionNames.size(); k++) {
-                            String lineConnectionName = lineConnectionNames.get(k).attr("title");
-                            lineConnectionName = lineConnectionName.replaceAll(".+ станцию ", "");
+                        for (int k = 0; k < stationConnectionNames.size(); k++) {
+                            String stationConnectionName = stationConnectionNames.get(k).attr("title");
+                            stationConnectionName = stationConnectionName.replaceAll(".+ станцию ", "");
 
                             for (int l = 0; l < stations.size(); l++) {
-                                if (lineConnectionName.contains(stations.get(l).getName())) {
-                                    lineConnectionName = stations.get(l).getName();
-                                    connectStation = stations.get(l);
+                                if (stationConnectionName.contains(stations.get(l).getName())) {
+                                    stationConnectionName = stations.get(l).getName();
                                 }
-
-                                if (stationName.contains(stations.get(l).getName()))
-                                    mainStation = stations.get(l);
+                                connectStations.put(lineConnectionNumbers[k], stationConnectionName);
                             }
-                            System.out.println(lineConnectionNumber + " / " + lineConnectionName);
-                            connectStations.put(mainStation.getLine().getNumber(), mainStation.getName());
-                            connectStations.put(connectStation.getLine().getNumber(), connectStation.getName());
                         }
                         Connections connection = new Connections(connectStations);
-//                        connections.addAll((Collection<? extends Connections>) connection);
-                        for (Map.Entry<String, String> entry : connectStations.entrySet())
-                        {
-                            System.out.println(entry.getKey() + " : " + entry.getValue());
-                        }
+                        connections.add(connection);
                     }
                 }
             }
