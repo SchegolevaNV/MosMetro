@@ -65,11 +65,12 @@ public class Parser {
         return objects = new Object[]{lines, stations};
     }
 
-    public Object[] parseConnection () throws IOException {
+    public ArrayList<Connections> parseConnection () throws IOException {
 
         Document doc = Jsoup.connect(url).maxBodySize(0).get();
         Station mainStation = new Station("", null);
         Station connectStation = new Station("", null);
+        ArrayList<Connections> connections = new ArrayList<>();
 
         for (int i = 3; i <= 5; i++) {
             Elements table = doc.select("table").get(i).select("tr");
@@ -83,7 +84,7 @@ public class Parser {
 
                     if (!lineConnectionNumber.isEmpty()) {
                         Elements lineConnectionNames = td.get(3).select("span[title]");
-                        ArrayList<Station> connections = new ArrayList<>();
+                        TreeMap<String,String> connectStations = new TreeMap<>();
 
                         for (int k = 0; k < lineConnectionNames.size(); k++) {
                             String lineConnectionName = lineConnectionNames.get(k).attr("title");
@@ -99,16 +100,20 @@ public class Parser {
                                     mainStation = stations.get(l);
                             }
                             System.out.println(lineConnectionNumber + " / " + lineConnectionName);
-                            connections.add(mainStation);
-                            connections.add(connectStation);
+                            connectStations.put(mainStation.getLine().getNumber(), mainStation.getName());
+                            connectStations.put(connectStation.getLine().getNumber(), connectStation.getName());
                         }
-                        Connections connection = new Connections(connections);
-                       // System.out.println(connection.getConnections());
+                        Connections connection = new Connections(connectStations);
+//                        connections.addAll((Collection<? extends Connections>) connection);
+                        for (Map.Entry<String, String> entry : connectStations.entrySet())
+                        {
+                            System.out.println(entry.getKey() + " : " + entry.getValue());
+                        }
                     }
                 }
             }
         }
-        return null;
+        return connections;
     }
 }
 /**===ТЕСТОВЫЙ КОД =======**/

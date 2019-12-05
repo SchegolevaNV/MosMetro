@@ -1,15 +1,15 @@
 package Metro;
-import java.util.ArrayList;
+import java.util.TreeMap;
 
 public class Connections {
 
-    private ArrayList<Station> connections = new ArrayList<>();
+    private TreeMap<String, String> connections = new TreeMap<>();
 
-    public Connections (ArrayList<Station> connection) {
+    public Connections (TreeMap<String, String> connection) {
         this.connections = connection;
     }
 
-    public ArrayList<Station> getConnections() {
+    public TreeMap<String, String> getConnections() {
         return connections;
     }
 }
