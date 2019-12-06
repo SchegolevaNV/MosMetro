@@ -106,6 +106,22 @@ public class Parser {
                 }
             }
         }
+
+        for (int i = 0; i < connections.size(); i++) {
+            TreeMap<String, String> buffer = connections.get(i).getConnections();
+            for (int j = 0; j < connections.size(); j++) {
+                if (buffer.equals(connections.get(j).getConnections())) {
+                    connections.remove(connections.get(j));
+                    i--;
+                }
+            }
+        }
+
+        System.out.println(connections.size());
+
+        for (int i = 0; i < connections.size(); i++) {
+            System.out.println(connections.get(i).getConnections());
+        }
         return connections;
     }
 }
