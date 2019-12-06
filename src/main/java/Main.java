@@ -23,9 +23,11 @@ public class Main {
             System.out.println(connection.getConnections());
         }
 
-//        for (Line line : lines)
-//        {
-//            System.out.println(line.getNumber() + " " + line.getName() + " " + line.getColor() + " / " + line.getStations().size());
-//        }
+        System.out.println("==================\n");
+
+        for (Line line : lines)
+        {
+            System.out.println(line.getNumber() + " " + line.getName() + " " + line.getColor() + " / " + line.getStations().size() + " станц.");
+        }
     }
 }

@@ -113,34 +113,4 @@ public class Parser {
         }
         return connections;
     }
-
-    private void getTable() throws IOException {
-        Document doc = Jsoup.connect(url).maxBodySize(0).get();
-
-        for (int i = 3; i <= 5; i++) {
-            Elements table = doc.select("table").get(i).select("tr");
-
-            for (int j = 0; j < table.size(); j++) {
-                Elements td = table.get(j).select("td");
-            }
-        }
-    }
 }
-
-
-
-/**===ТЕСТОВЫЙ КОД =======**/
-
-//   TreeMap<String, String> lines = new TreeMap<>();
-//   TreeSet<String> colors = new TreeSet<>();
-//                    lines.put(lineNumber, lineName.replaceAll(" линия", ""));
-//                    colors.add(color);
-//        for (Map.Entry<String, String> entry : lines.entrySet())
-//        {
-//            System.out.println(entry.getKey() + " : " + entry.getValue());
-//        }
-//
-//        Iterator iterator = colors.iterator();
-//        while (iterator.hasNext()){
-//            System.out.println(iterator.next());
-//        }
