@@ -61,15 +61,12 @@ public class Parser {
                 }
             }
         }
-        parseConnection();
-        return objects = new Object[]{lines, stations};
+        return objects = new Object[]{lines, stations, parseConnection()};
     }
 
-    public ArrayList<Connections> parseConnection() throws IOException {
+    private ArrayList<Connections> parseConnection() throws IOException {
 
         Document doc = Jsoup.connect(url).maxBodySize(0).get();
-        Station mainStation = new Station("", null);
-        Station connectStation = new Station("", null);
         ArrayList<Connections> connections = new ArrayList<>();
 
         for (int i = 3; i <= 5; i++) {
@@ -108,23 +105,30 @@ public class Parser {
         }
 
         for (int i = 0; i < connections.size(); i++) {
-            TreeMap<String, String> buffer = connections.get(i).getConnections();
             for (int j = 0; j < connections.size(); j++) {
-                if (buffer.equals(connections.get(j).getConnections())) {
+                if (connections.get(i).getConnections().equals(connections.get(j).getConnections()) && i!=j) {
                     connections.remove(connections.get(j));
-                    i--;
                 }
             }
         }
-
-        System.out.println(connections.size());
-
-        for (int i = 0; i < connections.size(); i++) {
-            System.out.println(connections.get(i).getConnections());
-        }
         return connections;
     }
+
+    private void getTable() throws IOException {
+        Document doc = Jsoup.connect(url).maxBodySize(0).get();
+
+        for (int i = 3; i <= 5; i++) {
+            Elements table = doc.select("table").get(i).select("tr");
+
+            for (int j = 0; j < table.size(); j++) {
+                Elements td = table.get(j).select("td");
+            }
+        }
+    }
 }
+
+
+
 /**===ТЕСТОВЫЙ КОД =======**/
 
 //   TreeMap<String, String> lines = new TreeMap<>();

@@ -1,3 +1,4 @@
+import Metro.Connections;
 import Metro.Line;
 import Metro.Station;
 import java.io.IOException;
@@ -15,12 +16,12 @@ public class Main {
         Object[] metro = metroParser.parse();
         ArrayList<Line> lines = (ArrayList<Line>) metro[0];
         ArrayList<Station> stations = (ArrayList<Station>) metro[1];
-//        ArrayList<Station> connections = metroParser.parseConnection();
+        ArrayList<Connections> connections = (ArrayList<Connections>) metro[2];
 
-//        for (Station connection : connections)
-//        {
-//            System.out.println(connection.getLine().getNumber() + " / " + connection.getName());
-//        }
+        for (Connections connection: connections)
+        {
+            System.out.println(connection.getConnections());
+        }
 
 //        for (Line line : lines)
 //        {
