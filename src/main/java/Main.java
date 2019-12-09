@@ -1,8 +1,10 @@
 import Metro.Connections;
 import Metro.Line;
 import Metro.Station;
+import com.google.gson.GsonBuilder;
+
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 
 public class Main {
 
@@ -14,20 +16,28 @@ public class Main {
     {
         Parser metroParser = new Parser(URL);
         Object[] metro = metroParser.parse();
-        ArrayList<Line> lines = (ArrayList<Line>) metro[0];
+        ArrayList<Line> line = (ArrayList<Line>) metro[0];
         ArrayList<Station> stations = (ArrayList<Station>) metro[1];
         ArrayList<Connections> connections = (ArrayList<Connections>) metro[2];
 
-        for (Connections connection: connections)
-        {
-            System.out.println(connection.getConnections());
+        Map<String, List<String>> station = new HashMap<>();
+        List<String> list = new ArrayList<>();
+
+        for (int i = 0; i < line.size(); i++) {
+            for (int j = 0; j < line.get(i).getStations().size(); j++) {
+                list.add(line.get(i).getStations().get(j).getName());
+            }
+            station.put(line.get(i).getNumber(), list);
         }
 
-        System.out.println("==================\n");
+        ForJson forJson = new ForJson();
+        forJson.setStations(station);
+        forJson.setLines(line);
 
-        for (Line line : lines)
-        {
-            System.out.println(line.getNumber() + " " + line.getName() + " " + line.getColor() + " / " + line.getStations().size() + " станц.");
-        }
+        String json =
+                new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().
+                        create().toJson(forJson);
+
+        System.out.println(json);
     }
 }
