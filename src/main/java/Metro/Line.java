@@ -17,6 +17,12 @@ public class Line implements Comparable<Line>
         stations = new ArrayList();
     }
 
+    public Line (Line line) {
+        this.number = line.getNumber();
+        this.name = line.getName();
+        this.color = line.getColor();
+    }
+
     public String getNumber() {
         return number;
     }

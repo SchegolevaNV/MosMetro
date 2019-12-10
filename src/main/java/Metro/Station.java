@@ -2,16 +2,17 @@ package Metro;
 
 public class Station implements Comparable<Station>
 {
-    private Line line;
+    private String line;
     private String name;
+    private String lineColor;
 
-    public Station(String name, Line line)
-    {
+    public Station(String name, String line, String lineColor) {
         this.name = name;
         this.line = line;
+        this.lineColor = lineColor;
     }
 
-    public Line getLine()
+    public String getLine()
     {
         return line;
     }
@@ -19,6 +20,10 @@ public class Station implements Comparable<Station>
     public String getName()
     {
         return name;
+    }
+
+    public String getLineColor() {
+        return lineColor;
     }
 
     @Override

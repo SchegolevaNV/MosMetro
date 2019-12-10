@@ -27,8 +27,8 @@ public class Parser {
         for (int i = 3; i <= 5; i++) {
             Elements table = doc.select("table").get(i).select("tr");
 
-            for (int j = 0; j < table.size(); j++) {
-                Elements td = table.get(j).select("td");
+            for (org.jsoup.nodes.Element element : table) {
+                Elements td = element.select("td");
 
                 if (!td.isEmpty()) {
                     String lineNumber = td.get(0).selectFirst("span.sortkey").text();
@@ -46,7 +46,7 @@ public class Parser {
                         lineForStation = line;
                     }
                     String stationName = td.get(1).selectFirst("a").text();
-                    Station station = new Station(stationName, lineForStation);
+                    Station station = new Station(stationName, lineForStation.getNumber(), lineForStation.getColor());
                     lineForStation.addStation(station);
                     stations.add(station);
 
@@ -72,8 +72,8 @@ public class Parser {
         for (int i = 3; i <= 5; i++) {
             Elements table = doc.select("table").get(i).select("tr");
 
-            for (int j = 0; j < table.size(); j++) {
-                Elements td = table.get(j).select("td");
+            for (org.jsoup.nodes.Element element : table) {
+                Elements td = element.select("td");
 
                 if (!td.isEmpty()) {
                     String lineNumber = td.get(0).selectFirst("span.sortkey").text();
@@ -86,15 +86,15 @@ public class Parser {
                         TreeMap<String, String> connectStations = new TreeMap<>();
                         connectStations.put(lineNumber, stationName);
 
-                        for (int k = 0; k < stationConnectionNames.size(); k++) {
-                            String stationConnectionName = stationConnectionNames.get(k).attr("title");
+                        for (int j = 0; j < stationConnectionNames.size(); j++) {
+                            String stationConnectionName = stationConnectionNames.get(j).attr("title");
                             stationConnectionName = stationConnectionName.replaceAll(".+ станцию ", "");
 
-                            for (int l = 0; l < stations.size(); l++) {
-                                if (stationConnectionName.contains(stations.get(l).getName())) {
-                                    stationConnectionName = stations.get(l).getName();
+                            for (Station station : stations) {
+                                if (stationConnectionName.contains(station.getName())) {
+                                    stationConnectionName = station.getName();
                                 }
-                                connectStations.put(lineConnectionNumbers[k], stationConnectionName);
+                                connectStations.put(lineConnectionNumbers[j], stationConnectionName);
                             }
                         }
                         Connections connection = new Connections(connectStations);
