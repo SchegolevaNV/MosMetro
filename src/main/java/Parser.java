@@ -1,6 +1,10 @@
 import Metro.Connections;
 import Metro.Line;
 import Metro.Station;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -8,6 +12,10 @@ import java.io.IOException;
 import java.util.*;
 
 public class Parser {
+
+    private static final Logger MARKLOGGER = LogManager.getLogger(Parser.class);
+    private static final Marker URL_ERROR = MarkerManager.getMarker("URL_ERROR");
+    private static final Marker PARSED_STATIONS = MarkerManager.getMarker("PARSED_STATIONS");
 
     private String url;
     ArrayList<Line> lines = new ArrayList<>();
@@ -18,9 +26,9 @@ public class Parser {
         this.url = url;
     }
 
-    public Object[] parse() throws IOException {
+    public Object[] parse() {
 
-        Document doc = Jsoup.connect(url).maxBodySize(0).get();
+        Document doc = connectToUrl(url);
         Line lineForStation = new Line("", "", "");
         Line line8A = new Line("", "", "");
 
@@ -49,6 +57,7 @@ public class Parser {
                     Station station = new Station(stationName, lineForStation.getNumber(), lineForStation.getColor());
                     lineForStation.addStation(station);
                     stations.add(station);
+                    MARKLOGGER.info(PARSED_STATIONS, "/parseStations/ Station is parsed: {}", stationName);
 
                     if (lineForStation.getNumber().equals("8А")) {
                         line8A = lineForStation;
@@ -64,9 +73,9 @@ public class Parser {
         return objects = new Object[]{lines, stations, parseConnection()};
     }
 
-    private ArrayList<Connections> parseConnection() throws IOException {
+    private ArrayList<Connections> parseConnection() {
 
-        Document doc = Jsoup.connect(url).maxBodySize(0).get();
+        Document doc = connectToUrl(url);
         ArrayList<Connections> connections = new ArrayList<>();
 
         for (int i = 3; i <= 5; i++) {
@@ -112,5 +121,16 @@ public class Parser {
             }
         }
         return connections;
+    }
+
+    private Document connectToUrl(String url)
+    {
+        try {
+            Document doc = Jsoup.connect(url).maxBodySize(0).get();
+            return doc;
+        } catch (Exception ex) {
+            MARKLOGGER.info(URL_ERROR,"URL Error {}", ex.getMessage());
+        }
+        return null;
     }
 }

@@ -2,6 +2,10 @@ import Metro.Connections;
 import Metro.Line;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -16,6 +20,9 @@ public class Main {
             "%D0%B3%D0%BE_%D0%BC%D0%B5%D1%82%D1%80%D0%BE%D0%BF%D0%BE%D0%BB%D0%B8%D1%82%D0%B5%D0%BD%D0%B0";
 
     private static final String OUTFILE = "src/main/resources/MosMetro.json";
+
+    private static final Logger MARKLOGGER = LogManager.getLogger(Main.class);
+    private static final Marker INVALID_FILE = MarkerManager.getMarker("INVALID_FILE");
 
     public static void main(String[] args) throws IOException
     {
@@ -68,7 +75,7 @@ public class Main {
             writer.append(json);
             writer.close();
         } catch (Exception e) {
-            e.getMessage();
+            MARKLOGGER.info(INVALID_FILE, "/writeToJson/ Path is invalid or FS error: {}", e.getMessage());
         }
     }
 
@@ -84,7 +91,7 @@ public class Main {
                 });
 
             } catch (Exception ex) {
-                ex.getMessage();
+                MARKLOGGER.info(INVALID_FILE, "/linesFromJson/ Path is invalid or FS error: {}", ex.getMessage());
             }
         }
 

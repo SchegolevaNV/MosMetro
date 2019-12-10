@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <File name="URLError" fileName="logs/url_error.log">
+            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} %msg%n"/>
+            <Filters>
+                <MarkerFilter marker="URL_ERROR" />
+            </Filters>
+        </File>
+        <File name="ParsedStations" fileName="logs/stations_parsed.log">
+            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} %msg%n"/>
+            <Filters>
+                <MarkerFilter marker="PARSED_STATIONS" />
+            </Filters>
+        </File>
+        <File name="InvalidFile" fileName="logs/file_errors.log">
+            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} %msg%n"/>
+            <Filters>
+                <MarkerFilter marker="INVALID_FILE" />
+            </Filters>
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <root level="info">
+            <appender-ref ref="URLError" />
+            <appender-ref ref="ParsedStations" />
+            <appender-ref ref="InvalidFile" />
+        </root>
+    </Loggers>
+</Configuration>
