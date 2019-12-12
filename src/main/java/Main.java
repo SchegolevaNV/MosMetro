@@ -1,5 +1,6 @@
 import Metro.Connections;
 import Metro.Line;
+import Metro.Station;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -24,52 +25,20 @@ public class Main {
     private static final Logger MARKLOGGER = LogManager.getLogger(Main.class);
     private static final Marker INVALID_FILE = MarkerManager.getMarker("INVALID_FILE");
 
-    public static void main(String[] args) throws IOException
+    public static void main(String[] args)
     {
         Parser metroParser = new Parser(URL);
-        Object[] metro = metroParser.parse();
-        List<Line> line = (ArrayList<Line>) metro[0];
-        ArrayList<Connections> connections = (ArrayList<Connections>) metro[2];
+        ParserResult metro = metroParser.parse();
 
-        writeToJson(line, connections);
+        writeToJson(metro);
         linesFromJson();
     }
 
-    private static void writeToJson(List<Line> line, ArrayList<Connections> connections)
+    private static void writeToJson(ParserResult result)
     {
-        Map<String, List<String>> stationsToJson = new HashMap<>();
-        List<Line> linesToJson = new ArrayList<>();
-        ArrayList<ArrayList<TreeMap<String,String>>> connectionsToJson = new ArrayList<>();
-
-        for (int i = 0; i < line.size(); i++) {
-            List<String> stations = new ArrayList<>();
-            for (int j = 0; j < line.get(i).getStations().size(); j++) {
-                stations.add(line.get(i).getStations().get(j).getName());
-            }
-            stationsToJson.put(line.get(i).getNumber(), stations);
-            linesToJson.add(new Line(line.get(i)));
-        }
-
-        for (Connections connection : connections) {
-            ArrayList<TreeMap<String, String>> thisConnection = new ArrayList<>();
-            TreeMap<String, String> newConnection = connection.getConnections();
-            newConnection.forEach((key, value) -> {
-                TreeMap<String, String> station = new TreeMap<>();
-                station.put("line", key);
-                station.put("station", value);
-                thisConnection.add(station);
-            });
-            connectionsToJson.add(thisConnection);
-        }
-
-        ForJson forJson = new ForJson();
-        forJson.setStations(stationsToJson);
-        forJson.setLines(linesToJson);
-        forJson.setConnections(connectionsToJson);
-
         String json =
                 new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().
-                        create().toJson(forJson);
+                        create().toJson(result);
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(OUTFILE, false));
             writer.append(json);
@@ -83,7 +52,7 @@ public class Main {
         {
             try {
                 Gson mosMetro = new Gson();
-                ForJson metro = mosMetro.fromJson(new FileReader(OUTFILE), ForJson.class);
+                ParserResult metro = mosMetro.fromJson(new FileReader(OUTFILE), ParserResult.class);
                 Map<String, List<String>> lines = metro.getStations();
                 lines.forEach((key, value) -> {
                     String[] stations = value.toString().split(",");

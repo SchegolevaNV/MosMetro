@@ -8,7 +8,6 @@ import org.apache.logging.log4j.MarkerManager;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import java.io.IOException;
 import java.util.*;
 
 public class Parser {
@@ -18,15 +17,15 @@ public class Parser {
     private static final Marker PARSED_STATIONS = MarkerManager.getMarker("PARSED_STATIONS");
 
     private String url;
+
     ArrayList<Line> lines = new ArrayList<>();
-    ArrayList<Station> stations = new ArrayList<>();
-    Object[] objects = new Object[]{};
+    List<Station> stations = new ArrayList<>();
 
     public Parser(String url) {
         this.url = url;
     }
 
-    public Object[] parse() {
+    public ParserResult parse() {
 
         Document doc = connectToUrl(url);
         Line lineForStation = new Line("", "", "");
@@ -70,13 +69,28 @@ public class Parser {
                 }
             }
         }
-        return objects = new Object[]{lines, stations, parseConnection()};
+
+        Map<String, List<String>> stationsToJson = new HashMap<>();
+        List<Line> linesToJson = new ArrayList<>();
+
+        for (int i = 0; i < lines.size(); i++) {
+            List<String> stations = new ArrayList<>();
+            for (int j = 0; j < lines.get(i).getStations().size(); j++) {
+                stations.add(lines.get(i).getStations().get(j).getName());
+            }
+            stationsToJson.put(lines.get(i).getNumber(), stations);
+            linesToJson.add(new Line(lines.get(i)));
+        }
+
+        ParserResult result = new ParserResult(stationsToJson, linesToJson, parseConnection());
+        return result;
     }
 
-    private ArrayList<Connections> parseConnection() {
+    private ArrayList<ArrayList<TreeMap<String,String>>> parseConnection() {
 
         Document doc = connectToUrl(url);
-        ArrayList<Connections> connections = new ArrayList<>();
+        List<Connections> connections = new ArrayList<>();
+        ArrayList<ArrayList<TreeMap<String,String>>> connectionsToJson = new ArrayList<>();
 
         for (int i = 3; i <= 5; i++) {
             Elements table = doc.select("table").get(i).select("tr");
@@ -120,7 +134,20 @@ public class Parser {
                 }
             }
         }
-        return connections;
+
+        for (Connections connection : connections) {
+            ArrayList<TreeMap<String, String>> thisConnection = new ArrayList<>();
+            TreeMap<String, String> newConnection = connection.getConnections();
+            newConnection.forEach((key, value) -> {
+                TreeMap<String, String> station = new TreeMap<>();
+                station.put("line", key);
+                station.put("station", value);
+                thisConnection.add(station);
+            });
+            connectionsToJson.add(thisConnection);
+        }
+
+        return connectionsToJson;
     }
 
     private Document connectToUrl(String url)
