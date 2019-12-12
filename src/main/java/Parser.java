@@ -158,6 +158,6 @@ public class Parser {
         } catch (Exception ex) {
             MARKLOGGER.info(URL_ERROR,"URL Error {}", ex.getMessage());
         }
-        return null;
+        throw new NullPointerException("Некорректная ссылка, проверьте и перезапустите программу");
     }
 }

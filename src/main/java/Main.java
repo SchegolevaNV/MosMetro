@@ -59,6 +59,5 @@ public class Main {
                 MARKLOGGER.info(INVALID_FILE, "/linesFromJson/ Path is invalid or FS error: {}", ex.getMessage());
             }
         }
-
     }
 }
