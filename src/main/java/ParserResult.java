@@ -3,8 +3,8 @@ import java.util.*;
 
 public class ParserResult {
 
-    private List<Line> lines;
     private Map<String, List<String>> stations;
+    private List<Line> lines;
     private ArrayList<ArrayList<TreeMap<String,String>>> connections;
 
 

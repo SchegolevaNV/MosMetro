@@ -90,7 +90,6 @@ public class Parser {
 
         Document doc = connectToUrl(url);
         List<Connections> connections = new ArrayList<>();
-        ArrayList<ArrayList<TreeMap<String,String>>> connectionsToJson = new ArrayList<>();
 
         for (int i = 3; i <= 5; i++) {
             Elements table = doc.select("table").get(i).select("tr");
@@ -135,6 +134,7 @@ public class Parser {
             }
         }
 
+        ArrayList<ArrayList<TreeMap<String,String>>> connectionsToJson = new ArrayList<>();
         for (Connections connection : connections) {
             ArrayList<TreeMap<String, String>> thisConnection = new ArrayList<>();
             TreeMap<String, String> newConnection = connection.getConnections();

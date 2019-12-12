@@ -1,6 +1,3 @@
-import Metro.Connections;
-import Metro.Line;
-import Metro.Station;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -11,7 +8,6 @@ import org.apache.logging.log4j.MarkerManager;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.*;
 
 public class Main {

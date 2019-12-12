@@ -3,7 +3,7 @@ import java.util.TreeMap;
 
 public class Connections {
 
-    private TreeMap<String, String> connections = new TreeMap<>();
+    private TreeMap<String, String> connections;
 
     public Connections (TreeMap<String, String> connection) {
         this.connections = connection;

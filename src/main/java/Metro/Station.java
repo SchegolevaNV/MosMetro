@@ -22,10 +22,6 @@ public class Station implements Comparable<Station>
         return name;
     }
 
-    public String getLineColor() {
-        return lineColor;
-    }
-
     @Override
     public int compareTo(Station station)
     {
